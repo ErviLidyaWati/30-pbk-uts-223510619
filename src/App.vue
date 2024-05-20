@@ -22,11 +22,22 @@
     <div class="konten">
       <div v-if="menuAktif === 'todos'">
         <!-- Komponen TodoList -->
-        <TodoList />
+        <TodoList :user-name="userName" :user-email="userEmail" @update-user="updateUser">
+          <template v-slot:user-info>
+            <div class="user-info">
+              <p>Nama: {{ userName }}</p>
+              <p>Email: {{ userEmail }}</p>
+            </div>
+          </template>
+        </TodoList>
       </div>
       <div v-else-if="menuAktif === 'post'">
         <!-- Komponen Post -->
-        <Post />
+        <Post :user-name="userName" :user-email="userEmail">
+          <template v-slot:header>
+            <h2>Daftar Postingan oleh {{ userName }}</h2>
+          </template>
+        </Post>
       </div>
     </div>
   </div>
@@ -37,19 +48,27 @@
 import TodoList from './components/TodoList.vue';
 import Post from './components/Post.vue';
 
+
 export default {
   components: {
     TodoList,
-    Post
+    Post,
+    
   },
   data() {
     return {
-      menuAktif: 'todos' // Menu aktif awal
+      menuAktif: 'todos', // Menu aktif awal
+      userName: 'John Doe', // Nama pengguna default
+      userEmail: 'john@example.com' // Email pengguna default
     };
   },
   methods: {
     pilihMenu(menu) {
       this.menuAktif = menu;
+    },
+    updateUser(userName, userEmail) {
+      this.userName = userName;
+      this.userEmail = userEmail;
     }
   }
 };
@@ -108,7 +127,7 @@ export default {
   font-weight: bold;
 }
 
-.post {
+.konten {
   padding-top: 20px;
 }
 </style>

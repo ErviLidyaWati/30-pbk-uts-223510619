@@ -1,6 +1,9 @@
 <template>
   <div class="post">
-    <h2 class="post-title">Postingan</h2>
+    <!-- Slot untuk header -->
+    <slot name="header">
+      <h2 class="post-title">Postingan</h2>
+    </slot>
     <div class="select-container">
       <label for="user-select" class="select-label">Pilih Pengguna:</label>
       <select v-model="selectedUsers" id="user-select" @change="loadPosts" class="user-select" multiple>
@@ -34,9 +37,12 @@
   </div>
 </template>
 
-
-<script >
+<script>
 export default {
+  props: {
+    userName: String,
+    userEmail: String
+  },
   data() {
     return {
       selectedUsers: [],
@@ -46,20 +52,20 @@ export default {
     };
   },
   methods: {
-   async loadPosts() {
-  try {
-    const requests = this.selectedUsers.map(async userId => {
-      const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
-      const posts = await response.json();
-      return {
-        userId: userId,
-        posts: posts.map((post, index) => ({
-          ...post,
-          backgroundColor: this.getRandomColor(),
-          postId: post.id // Menambahkan ID postingan untuk identifikasi unik
-        }))
-      };
-    });
+    async loadPosts() {
+      try {
+        const requests = this.selectedUsers.map(async userId => {
+          const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
+          const posts = await response.json();
+          return {
+            userId: userId,
+            posts: posts.map((post, index) => ({
+              ...post,
+              backgroundColor: this.getRandomColor(),
+              postId: post.id // Menambahkan ID postingan untuk identifikasi unik
+            }))
+          };
+        });
 
         const results = await Promise.all(requests);
         this.postsByUser = results.reduce((acc, { userId, posts }) => {
@@ -110,19 +116,73 @@ export default {
       const r = (rgb >> 16) & 0xff;
       const g = (rgb >> 8) & 0xff;
       const b = (rgb >> 0) & 0xff;
-
-      // Hitung kecerahan
-      const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-      // Jika kecerahan cukup tinggi, gunakan warna teks gelap
-      return brightness > 125 ? '#000000' : '#ffffff';
+      // Hitung luminansi relatif
+      const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      // Kembalikan warna teks hitam atau putih berdasarkan luminansi
+      return luminance > 128 ? '#000000' : '#FFFFFF';
     }
   },
-  mounted() {
-    this.loadUsers();
+  async mounted() {
+    await this.loadUsers();
   }
 };
 </script>
+
+<style scoped>
+/* Gaya CSS untuk Post.vue */
+
+.post {
+  margin: 20px;
+}
+
+.select-container {
+  margin-bottom: 20px;
+}
+
+.select-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.user-select {
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.post-list {
+  margin-top: 20px;
+}
+
+.post-item {
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.post-item-title {
+  margin: 0 0 10px;
+}
+
+.post-item-body {
+  margin: 0;
+}
+
+.post-user-info {
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.user-info-label {
+  font-weight: bold;
+}
+
+.no-post-message {
+  font-style: italic;
+  color: #888;
+}
+</style>
+
+
 
 <style scoped>
 /* Gaya untuk Post */
