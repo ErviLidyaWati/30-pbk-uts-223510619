@@ -14,6 +14,7 @@
         <ul>
           <li @click="pilihMenu('todos')" :class="{ 'aktif': menuAktif === 'todos' }">Todos</li>
           <li @click="pilihMenu('post')" :class="{ 'aktif': menuAktif === 'post' }">Post</li>
+          <li @click="pilihMenu('album')" :class="{ 'aktif': menuAktif === 'album' }">Album</li>
         </ul>
       </nav>
     </header>
@@ -39,21 +40,28 @@
           </template>
         </Post>
       </div>
+      <div v-else-if="menuAktif === 'album'">
+        <!-- Komponen AlbumPhotos -->
+        <AlbumPhotos :user-name="userName" :user-email="userEmail">
+          <template v-slot:header>
+            <h2>Album Foto oleh {{ userName }}</h2>
+          </template>
+        </AlbumPhotos>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-// Impor komponen TodoList dan Post
 import TodoList from './components/TodoList.vue';
 import Post from './components/Post.vue';
-
+import AlbumPhotos from './components/AlbumPhotos.vue';
 
 export default {
   components: {
     TodoList,
     Post,
-    
+    AlbumPhotos
   },
   data() {
     return {
@@ -75,11 +83,9 @@ export default {
 </script>
 
 <style scoped>
-/* Gaya yang sudah ada */
 
-/* Gaya untuk container */
 .container {
-  padding-top: 20px; /* Jarak antara header dengan konten */
+  padding-top: 20px; 
 }
 
 /* Gaya untuk header */
