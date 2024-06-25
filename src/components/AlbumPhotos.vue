@@ -26,29 +26,26 @@
 </template>
 
 <script>
+import { ref, onMounted } from 'vue'
+
 export default {
-  data() {
-    return {
-      photos: [],
-      photoLimit: 5,
-      modalImageUrl: '', // Untuk menyimpan URL gambar ukuran penuh
-      modalImageAlt: '' // Untuk menyimpan teks alternatif gambar
-    }
-  },
-  created() {
-    this.fetchPhotos()
-  },
-  methods: {
-    fetchPhotos() {
+  name: 'AlbumPhotos',
+  setup() {
+    const photos = ref([])
+    const photoLimit = ref(5)
+    const modalImageUrl = ref('') // Untuk menyimpan URL gambar ukuran penuh
+    const modalImageAlt = ref('') // Untuk menyimpan teks alternatif gambar
+
+    const fetchPhotos = () => {
       let url = `https://jsonplaceholder.typicode.com/photos`
-      if (this.photoLimit) {
-        url += `?_limit=${this.photoLimit}`
+      if (photoLimit.value) {
+        url += `?_limit=${photoLimit.value}`
       }
 
       fetch(url)
         .then((response) => response.json())
         .then((data) => {
-          this.photos = data.map((photo) => ({
+          photos.value = data.map((photo) => ({
             id: photo.id,
             thumbnailUrl: photo.thumbnailUrl,
             url: photo.url,
@@ -58,14 +55,29 @@ export default {
         .catch((error) => {
           console.error('Error fetching photos:', error)
         })
-    },
-    openModal(fullImageUrl) {
-      this.modalImageUrl = fullImageUrl
-      // Di sini Anda bisa menambahkan logika untuk teks alternatif jika diperlukan
-      this.modalImageAlt = '' // Sesuaikan dengan teks alternatif dari data jika ada
-    },
-    closeModal() {
-      this.modalImageUrl = ''
+    }
+
+    const openModal = (fullImageUrl) => {
+      modalImageUrl.value = fullImageUrl
+      modalImageAlt.value = '' // Sesuaikan dengan teks alternatif dari data jika ada
+    }
+
+    const closeModal = () => {
+      modalImageUrl.value = ''
+    }
+
+    onMounted(() => {
+      fetchPhotos()
+    })
+
+    return {
+      photos,
+      photoLimit,
+      modalImageUrl,
+      modalImageAlt,
+      fetchPhotos,
+      openModal,
+      closeModal
     }
   }
 }

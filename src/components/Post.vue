@@ -47,8 +47,8 @@ export default {
     return {
       selectedUsers: [],
       users: [],
-      postsByUser: {}, // Data untuk menyimpan postingan berdasarkan pengguna
-      totalPosts: 0 // Total postingan dari semua pengguna
+      postsByUser: {},
+      totalPosts: 0
     };
   },
   methods: {
@@ -62,7 +62,7 @@ export default {
             posts: posts.map((post, index) => ({
               ...post,
               backgroundColor: this.getRandomColor(),
-              postId: post.id // Menambahkan ID postingan untuk identifikasi unik
+              postId: post.id
             }))
           };
         });
@@ -73,7 +73,6 @@ export default {
           return acc;
         }, {});
 
-        // Menghitung total postingan dari semua pengguna
         this.totalPosts = results.reduce((total, { posts }) => total + posts.length, 0);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -95,7 +94,6 @@ export default {
         console.error('Error fetching users:', error);
       }
     },
-    // Mendapatkan nomor postingan berdasarkan ID postingan
     getPostNumber(postId) {
       let postNumber = 0;
       for (const key in this.postsByUser) {
@@ -109,16 +107,12 @@ export default {
       }
       return postNumber;
     },
-    // Mendapatkan warna teks yang kontras berdasarkan warna latar belakang
     getTextColor(backgroundColor) {
-      // Konversi warna latar belakang ke RGB
       const rgb = parseInt(backgroundColor.substring(1), 16);
       const r = (rgb >> 16) & 0xff;
       const g = (rgb >> 8) & 0xff;
       const b = (rgb >> 0) & 0xff;
-      // Hitung luminansi relatif
       const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-      // Kembalikan warna teks hitam atau putih berdasarkan luminansi
       return luminance > 128 ? '#000000' : '#FFFFFF';
     }
   },
@@ -127,62 +121,6 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-/* Gaya CSS untuk Post.vue */
-
-.post {
-  margin: 20px;
-}
-
-.select-container {
-  margin-bottom: 20px;
-}
-
-.select-label {
-  margin-right: 10px;
-  font-weight: bold;
-}
-
-.user-select {
-  padding: 5px;
-  border-radius: 5px;
-}
-
-.post-list {
-  margin-top: 20px;
-}
-
-.post-item {
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 5px;
-}
-
-.post-item-title {
-  margin: 0 0 10px;
-}
-
-.post-item-body {
-  margin: 0;
-}
-
-.post-user-info {
-  margin-top: 10px;
-  font-style: italic;
-}
-
-.user-info-label {
-  font-weight: bold;
-}
-
-.no-post-message {
-  font-style: italic;
-  color: #888;
-}
-</style>
-
-
 
 <style scoped>
 /* Gaya untuk Post */
